@@ -61,13 +61,13 @@ describe('UserService/UPDATE', async () => {
 
   test('update should return the updated user', async () => {
     const service = new UserService(model);
-    const user = await service.update(1, oldUser);
+    const user = await service.update(1, newUser);
     expect(user).toStrictEqual({ ...newUser, id: 1 });
   });
 
   test('update should return an invalid email error', async () => {
     const service = new UserService(model);
-    const user = await service.update(1, invalidUserEmail);
+    const user = await service.update(1, invalidUserEmail) as { error: ZodError };
     expect(user).toHaveProperty('error');
     expect(user).toHaveProperty('error.message');
     expect(user.error.errors[0].message).toEqual('Invalid email');
@@ -75,7 +75,7 @@ describe('UserService/UPDATE', async () => {
 
   test('update should return an invalid name error', async () => {
     const service = new UserService(model);
-    const user = await service.update(1, invalidUserName);
+    const user = await service.update(1, invalidUserName) as { error: ZodError };
     expect(user).toHaveProperty('error');
     expect(user).toHaveProperty('error.message');
     expect(user.error.errors[0].message).toEqual('Name must contain at least 3 character(s)');
@@ -83,10 +83,19 @@ describe('UserService/UPDATE', async () => {
 
   test('update should return an invalid password error', async () => {
     const service = new UserService(model);
-    const user = await service.update(1, invalidUserPassword);
+    const user = await service.update(1, invalidUserPassword) as { error: ZodError };
     expect(user).toHaveProperty('error');
     expect(user).toHaveProperty('error.message');
     expect(user.error.errors[0].message).toEqual('Password must contain at least 6 character(s)');
+  });
+
+  test('update should return an User not found error', async () => {
+    model.findOne.mockResolvedValue(null);
+    const service = new UserService(model);
+    const user = await service.update(2, newUser) as { error: Error };
+    expect(user).toHaveProperty('error');
+    expect(user).toHaveProperty('error.message');
+    expect(user.error.message).toEqual('User not found');
   });
 });
 
@@ -106,6 +115,7 @@ describe('UserService/DELETE', async () => {
   });
 
   test('delete should return an User not found error', async () => {
+    model.findOne.mockResolvedValue(null);
     const service = new UserService(model);
     const user = await service.delete(2) as { error: Error };
     expect(user).toHaveProperty('error');
@@ -133,7 +143,7 @@ describe('UserService/FIND', async () => {
     model.find.mockResolvedValue([]);
     const service = new UserService(model);
     const users = await service.find();
-    expect(users).toStrictEqual([newUser]);
+    expect(users).toStrictEqual([]);
   });
 });
 
@@ -155,7 +165,7 @@ describe('UserService/FIND_ONE', async () => {
   test('findOne should return an User not found error', async () => {
     model.findOne.mockResolvedValue(null);
     const service = new UserService(model);
-    const user = await service.findOne(2);
-    expect(user).toBeNull();
+    const user = await service.findOne(2) as { error: Error };
+    expect(user.error.message).toStrictEqual('User not found');
   });
 });
