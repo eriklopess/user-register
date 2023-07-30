@@ -6,3 +6,11 @@ export interface IUser {
     email: string;
     password: string;
 }
+
+export interface IUserUpdate {
+    photoUrl?: string;
+    birthDate?: Date;
+    name?: string;
+    email?: string;
+    password?: string;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { PrismaClient } from '@prisma/client';
-import { IUser } from '../interfaces/User';
+import { IUser, IUserUpdate } from '../interfaces/User';
 import prismaClient from '../database/prisma';
 import { IModel } from '../interfaces/Model';
 
@@ -15,7 +15,7 @@ export default class UserModel implements IModel<IUser> {
     data,
   });
 
-  update = async (id: number, data: IUser): Promise<IUser> => prismaClient.user.update({
+  update = async (id: number, data: IUserUpdate): Promise<IUser> => prismaClient.user.update({
     where: { id },
     data,
   });
