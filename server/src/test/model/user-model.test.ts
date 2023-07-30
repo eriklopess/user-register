@@ -3,18 +3,10 @@ import {
   describe, expect, test, vi,
 } from 'vitest';
 import UserModel from '../../model/User.model';
-import { IUser } from '../../interfaces/User';
 import prisma from '../../database/__mocks__/prisma';
+import { newUser } from '../objects';
 
 vi.mock('../../database/prisma');
-
-const newUser: IUser = {
-  name: 'John Doe',
-  email: 'john@gmail.com',
-  birthDate: new Date(),
-  photoUrl: 'https://google.com',
-  password: '123456',
-};
 
 describe('UserModel', async () => {
   test('create should return the generated user', async () => {

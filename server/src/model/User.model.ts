@@ -2,11 +2,12 @@
 import { PrismaClient } from '@prisma/client';
 import { IUser } from '../interfaces/User';
 import prismaClient from '../database/prisma';
+import { IModel } from '../interfaces/Model';
 
-export default class UserModel {
+export default class UserModel implements IModel<IUser> {
   private repository;
 
-  constructor(repository: PrismaClient) {
+  constructor(repository = new PrismaClient()) {
     this.repository = repository;
   }
 
