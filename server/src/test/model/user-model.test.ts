@@ -2,6 +2,7 @@
 import {
   describe, expect, test, vi,
 } from 'vitest';
+import UserModel from '../../model/User.model';
 import { IUser } from '../../interfaces/User';
 import prisma from '../../database/__mocks__/prisma';
 
