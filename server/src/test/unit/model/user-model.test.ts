@@ -50,4 +50,11 @@ describe('UserModel', async () => {
     const user = await model.delete(1);
     expect(user).toStrictEqual({ ...newUser, id: 1 });
   });
+
+  test('findByEmail should return the user', async () => {
+    prisma.user.findFirst.mockResolvedValue({ ...newUser, id: 1 });
+    const model = new UserModel(prisma);
+    const user = await model.findByEmail(newUser.email);
+    expect(user).toStrictEqual({ ...newUser, id: 1 });
+  });
 });
