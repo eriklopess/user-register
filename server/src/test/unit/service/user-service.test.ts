@@ -9,6 +9,7 @@ import model from '../../../model/__mocks__/User.model';
 import {
   invalidUserEmail, invalidUserName, invalidUserPassword, newUser,
 } from '../../objects';
+import { LoginResponse } from '../../../interfaces/Controller';
 
 vi.mock('../../../model/User.model');
 
@@ -168,6 +169,32 @@ describe('UserService', () => {
       const service = new UserService(model);
       const user = await service.findOne(2) as { error: Error };
       expect(user.error.message).toStrictEqual('User not found');
+    });
+  });
+
+  describe('UserService/LOGIN', async () => {
+    beforeEach(() => {
+      model.findByEmail.mockResolvedValue({ ...newUser, id: 1 });
+    });
+    test('login should return the user with token', async () => {
+      const service = new UserService(model);
+      const response = await service.login(newUser.email, newUser.password) as LoginResponse;
+      expect(response).toHaveProperty('token');
+      expect(response).toHaveProperty('user');
+      expect(response.user.email).toStrictEqual(newUser.email);
+    });
+    test('login should return an User not found error', async () => {
+      model.findByEmail.mockResolvedValue(null);
+      const service = new UserService(model);
+      const user = await service.login(newUser.email, newUser.password) as { error: Error };
+      expect(user.error.message).toStrictEqual('User not found');
+    });
+
+    test('login should return an password does not match error', async () => {
+      const service = new UserService(model);
+      const user = await service.login(newUser.email, 'invalid password') as { error: Error };
+
+      expect(user.error.message).toStrictEqual('Password does not match');
     });
   });
 });
