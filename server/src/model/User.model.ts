@@ -26,6 +26,10 @@ export default class UserModel implements IModel<IUser> {
 
   find = async (): Promise<IUser[]> => prismaClient.user.findMany({ });
 
+  findByEmail = async (email: string): Promise<IUser | null> => prismaClient.user.findFirst({
+    where: { email },
+  });
+
   delete = async (id: number): Promise<IUser> => prismaClient.user.delete({
     where: { id },
   });

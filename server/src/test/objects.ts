@@ -3,7 +3,7 @@ import { IUser } from '../interfaces/User';
 export const newUser: IUser = {
   name: 'John Doe',
   email: 'john@gmail.com',
-  birthDate: new Date(),
+  birthDate: new Date('1989-11-05'),
   photoUrl: 'https://google.com',
   password: '123456',
 };
@@ -11,7 +11,7 @@ export const newUser: IUser = {
 export const oldUser: IUser = {
   name: 'Teste',
   email: 'Teste@gmail.com',
-  birthDate: new Date(),
+  birthDate: new Date('1989-11-05'),
   photoUrl: 'https://google.com',
   password: '123456',
 };

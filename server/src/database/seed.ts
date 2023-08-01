@@ -40,6 +40,7 @@ export const usersData = [
 
 export const seed = async () => {
   try {
+    await prisma.$queryRawUnsafe('TRUNCATE TABLE "User" RESTART IDENTITY CASCADE');
     await prisma.user.createMany({
       data: usersData,
     });

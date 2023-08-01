@@ -12,7 +12,8 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "import"
     ],
     "rules": {
         "import/extensions": "off"
@@ -23,7 +24,15 @@
                 "extensions": [".js", ".ts"]
             }
         },
-        "import/no-extraneous-dependencies": "off",
+        "import/no-extraneous-dependencies": [
+            "error",
+            {
+                "devDependencies": ["test/**"],
+                "optionalDependencies": false,
+                "peerDependencies": false
+            }
+        ],
+        "import/prefer-default-export": "off",
         "class-methods-use-this": "off"
     }
 }

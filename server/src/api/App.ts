@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
+import usersRouters from '../routes/user.route';
 
 export default class App {
   public app: express.Application;
@@ -18,7 +19,7 @@ export default class App {
 
   // eslint-disable-next-line class-methods-use-this
   private routes(): void {
-    //
+    this.app.use('/api/v1/users', usersRouters);
   }
 
   public start(port: number): void {

@@ -12,6 +12,12 @@ export default class UserService implements Service<IUser> {
   }
 
   create = async (data: UserDTO): Promise<IUser | ServiceError> => {
+    const user = await this.model.findByEmail(data.email);
+    if (user) {
+      return {
+        error: new Error('User already exists'),
+      };
+    }
     const parsedData = userSchema.safeParse(data);
     if (!parsedData.success) {
       return {
@@ -19,7 +25,15 @@ export default class UserService implements Service<IUser> {
       };
     }
 
-    return this.model.create(parsedData.data);
+    const userData: IUser = {
+      name: data.name,
+      email: data.email,
+      birthDate: new Date(data.birthDate),
+      password: data.password,
+      photoUrl: data.photoUrl,
+    };
+
+    return this.model.create(userData);
   };
 
   find = async (): Promise<IUser[]> => this.model.find();
