@@ -2,11 +2,11 @@
 import {
   describe, expect, test, vi,
 } from 'vitest';
-import UserModel from '../../model/User.model';
-import prisma from '../../database/__mocks__/prisma';
-import { newUser } from '../objects';
+import UserModel from '../../../model/User.model';
+import prisma from '../../../database/__mocks__/prisma';
+import { newUser } from '../../objects';
 
-vi.mock('../../database/prisma');
+vi.mock('../../../database/prisma');
 
 describe('UserModel', async () => {
   test('create should return the generated user', async () => {
