@@ -36,7 +36,7 @@ export default class UserService implements Service<IUser> {
     return this.model.create(userData);
   };
 
-  find = async (): Promise<IUser[]> => this.model.find();
+  find = async (skip: number, limit: number): Promise<IUser[]> => this.model.find(skip, limit);
 
   findOne = async (id: number): Promise<IUser | ServiceError> => {
     const user = await this.model.findOne(id);

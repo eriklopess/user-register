@@ -7,7 +7,7 @@ import { ZodError } from 'zod';
 import UserService from '../../../services/User.service';
 import model from '../../../model/__mocks__/User.model';
 import {
-  invalidUserEmail, invalidUserName, invalidUserPassword, newUser, oldUser,
+  invalidUserEmail, invalidUserName, invalidUserPassword, newUser,
 } from '../../objects';
 
 vi.mock('../../../model/User.model');
@@ -136,14 +136,14 @@ describe('UserService', () => {
 
     test('find should return the users', async () => {
       const service = new UserService(model);
-      const users = await service.find();
+      const users = await service.find(10, 1);
       expect(users).toStrictEqual([newUser]);
     });
 
     test('find should return an empty array', async () => {
       model.find.mockResolvedValue([]);
       const service = new UserService(model);
-      const users = await service.find();
+      const users = await service.find(10, 1);
       expect(users).toStrictEqual([]);
     });
   });

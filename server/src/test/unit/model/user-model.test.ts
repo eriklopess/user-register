@@ -33,14 +33,14 @@ describe('UserModel', async () => {
   test('find should return an empty array', async () => {
     prisma.user.findMany.mockResolvedValue([]);
     const model = new UserModel(prisma);
-    const user = await model.find();
+    const user = await model.find(10, 1);
     expect(user).toStrictEqual([]);
   });
 
   test('find should return an array', async () => {
     prisma.user.findMany.mockResolvedValue([{ ...newUser, id: 1 }]);
     const model = new UserModel(prisma);
-    const user = await model.find();
+    const user = await model.find(10, 1);
     expect(user).toStrictEqual([{ ...newUser, id: 1 }]);
   });
 

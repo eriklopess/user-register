@@ -77,10 +77,47 @@ describe('UserController', () => {
   });
 
   describe('UserController/GET', () => {
+    beforeEach(async () => {
+      await prisma.$queryRawUnsafe('TRUNCATE TABLE "User" RESTART IDENTITY CASCADE');
+      await seed();
+    });
     test('get should return an array', async () => {
       const response = await request(URL).get('/users');
 
       expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('info');
+      expect(response.body).toHaveProperty('info.limit');
+      expect(response.body).toHaveProperty('info.page');
+      expect(response.body).toHaveProperty('info.numberOfPages');
+      expect(response.body).toHaveProperty('info.nextPage');
+
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+    });
+
+    test('get should return page two', async () => {
+      const response = await request(URL).get('/users/?page=2');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('info');
+      expect(response.body).toHaveProperty('info.limit');
+      expect(response.body).toHaveProperty('info.page');
+      expect(response.body.info.page).toBe(2);
+
+      expect(response.body).toHaveProperty('data');
+      expect(response.body.data.length > 0).toBe(true);
+    });
+
+    test("get shouldn't return next page", async () => {
+      const response = await request(URL).get('/users/?page=2');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('info');
+      expect(response.body).toHaveProperty('info.nextPage');
+      expect(response.body.info.nextPage.length).toBe(0);
+
+      expect(response.body).toHaveProperty('data');
+      expect(response.body.data.length > 0).toBe(true);
     });
   });
 
@@ -108,6 +145,15 @@ describe('UserController', () => {
       expect(response.body).toHaveProperty('error.message');
       expect(response.body.error.message).toEqual('User not found');
     });
+
+    test('get should return an error invalid id', async () => {
+      const response = await request(URL).get('/users/invalidId');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error.message');
+      expect(response.body.error.message).toBe('Invalid id');
+    });
   });
 
   describe('UserController/PUT/:id', () => {
@@ -133,6 +179,15 @@ describe('UserController', () => {
       expect(response.body).toHaveProperty('error');
       expect(response.body).toHaveProperty('error.message');
       expect(response.body.error.message).toEqual('Name must contain at least 3 character(s)');
+    });
+
+    test('put should return an invalid id error', async () => {
+      const response = await request(URL).put('/users/invalidId').send(invalidUserName);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error.message');
+      expect(response.body.error.message).toBe('Invalid id');
     });
 
     test('put should return an invalid email error', async () => {
@@ -178,6 +233,15 @@ describe('UserController', () => {
       expect(response.body).toHaveProperty('error');
       expect(response.body).toHaveProperty('error.message');
       expect(response.body.error.message).toEqual('User not found');
+    });
+
+    test('delete should return an invalid id error', async () => {
+      const response = await request(URL).delete('/users/invalidId');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error.message');
+      expect(response.body.error.message).toEqual('Invalid id');
     });
   });
 });
