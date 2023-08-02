@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { IUser, IUserUpdate } from '../interfaces/User';
 import prismaClient from '../database/prisma';
 import { IModel } from '../interfaces/Model';
+import { UserFindParams } from '../interfaces/Service';
 
 export default class UserModel implements IModel<IUser> {
   private repository;
@@ -25,9 +26,24 @@ export default class UserModel implements IModel<IUser> {
   });
 
   find = async (
-    skip: number,
-    take: number,
-  ): Promise<IUser[]> => prismaClient.user.findMany({ skip, take });
+    {
+      skip = 0,
+      limit = 10,
+      email = '',
+      name = '',
+    }: UserFindParams,
+  ): Promise<IUser[]> => prismaClient.user.findMany({
+    skip,
+    take: limit,
+    where: {
+      email: {
+        contains: email,
+      },
+      name: {
+        contains: name,
+      },
+    },
+  });
 
   findByEmail = async (email: string): Promise<IUser | null> => prismaClient.user.findFirst({
     where: { email },

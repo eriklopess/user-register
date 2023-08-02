@@ -71,12 +71,22 @@ export default class UserController implements IController<IUser> {
     res: Response<GetAllResponse<IUser> | ResponseError>,
   ): Promise<typeof res> => {
     try {
-      const { limit, page } = req.query;
+      const {
+        limit, page, name, email,
+      } = req.query;
       const limitNumber = Number(limit) || 10;
       const pageNumber = Number(page) && Number(page) > 0 ? Number(page) : 1;
       const skipNumber = limitNumber * pageNumber - limitNumber;
-      const users = await this.service.find(skipNumber, limitNumber);
-      const usersLength = await this.service.find(1, 99999999999);
+      const users = await this.service.find({
+        skip: skipNumber,
+        limit: limitNumber,
+        name: name as string,
+        email: email as string,
+      });
+      const usersLength = await this.service.find({
+        skip: 0,
+        limit: 999999999,
+      });
       const totalPages = Math.ceil(usersLength.length / limitNumber);
 
       return res.status(200).json({
@@ -174,7 +184,6 @@ export default class UserController implements IController<IUser> {
 
       return res.status(200).json(user);
     } catch (error) {
-      console.log(error);
       return res.status(404).json({ error });
     }
   };
