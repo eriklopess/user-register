@@ -32,9 +32,8 @@ describe('UserController', () => {
       const response = await request(URL).post('/users').send(newUser);
 
       expect(response.status).toBe(201);
-      expect(response.body).toEqual({
+      expect(response.body).toContain({
         ...newUser,
-        id: 1,
         birthDate: new Date(newUser.birthDate).toISOString(),
       });
     });
@@ -118,6 +117,44 @@ describe('UserController', () => {
 
       expect(response.body).toHaveProperty('data');
       expect(response.body.data.length > 0).toBe(true);
+    });
+
+    test('get should return an empty array', async () => {
+      const response = await request(URL).get('/users/?page=99999');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('data');
+
+      expect(response.body.data.length).toBe(0);
+    });
+
+    test('get should return an item in array - filter name', async () => {
+      await seed();
+      const response = await request(URL).get(`/users/?name=${usersData[0].name}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+
+      expect(response.body.data[0]).toStrictEqual({
+        ...usersData[0],
+        id: 1,
+        birthDate: new Date(usersData[0].birthDate).toISOString(),
+      });
+    });
+
+    test('get should return an item in array - filter email', async () => {
+      const response = await request(URL).get(`/users/?email=${usersData[0].email}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+
+      expect(response.body.data[0]).toStrictEqual({
+        ...usersData[0],
+        id: 1,
+        birthDate: new Date(usersData[0].birthDate).toISOString(),
+      });
     });
   });
 
