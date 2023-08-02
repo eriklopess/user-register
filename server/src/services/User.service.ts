@@ -3,6 +3,8 @@ import UserDTO, { userSchema } from '../schemas/User.schema';
 import { IUser } from '../interfaces/User';
 import { Service, ServiceError } from '../interfaces/Service';
 import UserUpdateDTO, { userUpdateSchema } from '../schemas/UserUpdate.schema';
+import { generateToken } from '../helpers/token';
+import { LoginResponse } from '../interfaces/Controller';
 
 export default class UserService implements Service<IUser> {
   private model;
@@ -73,5 +75,29 @@ export default class UserService implements Service<IUser> {
       };
     }
     return this.model.delete(id);
+  };
+
+  login = async (email: string, password: string): Promise<LoginResponse | ServiceError> => {
+    const user = await this.model.findByEmail(email);
+    if (!user) {
+      return {
+        error: new Error('User not found'),
+      };
+    }
+    if (user.password !== password) {
+      return {
+        error: new Error('Password does not match'),
+      };
+    }
+
+    const token = generateToken(user.email);
+    return {
+      token,
+      user: {
+        name: user.name,
+        photoUrl: user.photoUrl,
+        email: user.email,
+      },
+    };
   };
 }

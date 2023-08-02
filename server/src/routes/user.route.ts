@@ -11,5 +11,6 @@ router.get('/:id', idValidator, userController.findOne);
 router.post('/', userController.create);
 router.put('/:id', idValidator, userController.update);
 router.delete('/:id', idValidator, userController.delete);
+router.post('/login', userController.login);
 
 export default router;

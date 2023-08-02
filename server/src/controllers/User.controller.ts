@@ -1,6 +1,8 @@
 import { Response, Request } from 'express';
 import { ZodError } from 'zod';
-import { IController, RequestWithBody, ResponseError } from '../interfaces/Controller';
+import {
+  GetAllResponse, IController, LoginResponse, RequestWithBody, ResponseError,
+} from '../interfaces/Controller';
 import { IUser } from '../interfaces/User';
 import UserService from '../services/User.service';
 
@@ -40,7 +42,6 @@ export default class UserController implements IController<IUser> {
 
       return res.status(201).json(user);
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ error });
     }
   };
@@ -65,12 +66,29 @@ export default class UserController implements IController<IUser> {
     }
   };
 
-  find = async (_req: Request, res: Response<IUser[] | ResponseError>): Promise<typeof res> => {
+  find = async (
+    req: Request,
+    res: Response<GetAllResponse<IUser> | ResponseError>,
+  ): Promise<typeof res> => {
     try {
-      const users = await this.service.find();
-      return res.status(200).json(users);
+      const { limit, page } = req.query;
+      const limitNumber = Number(limit) || 10;
+      const pageNumber = Number(page) && Number(page) > 0 ? Number(page) : 1;
+      const skipNumber = limitNumber * pageNumber - limitNumber;
+      const users = await this.service.find(skipNumber, limitNumber);
+      const usersLength = await this.service.find(1, 99999999999);
+      const totalPages = Math.ceil(usersLength.length / limitNumber);
+
+      return res.status(200).json({
+        info: {
+          limit: limitNumber,
+          page: pageNumber,
+          totalPages,
+          nextPage: totalPages >= pageNumber + 1 ? `/users?limit=${limitNumber}&page=${pageNumber + 1}` : '',
+        },
+        data: users,
+      });
     } catch (error) {
-      console.log(this.service);
       return res.status(404).json({ error });
     }
   };
@@ -80,6 +98,7 @@ export default class UserController implements IController<IUser> {
   }>, res: Response<IUser | ResponseError>): Promise<typeof res> => {
     try {
       const { id } = req.params;
+
       const user = await this.service.findOne(Number(id));
       if ('error' in user) {
         return res.status(404).json({
@@ -124,6 +143,38 @@ export default class UserController implements IController<IUser> {
 
       return res.status(200).json(user);
     } catch (error) {
+      return res.status(404).json({ error });
+    }
+  };
+
+  login = async (
+    req: RequestWithBody<IUser>,
+    res: Response<LoginResponse | ResponseError>,
+  ): Promise<typeof res> => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({
+          error: {
+            message: 'Email and password are required',
+          },
+        });
+      }
+      const user = await this.service.login(email, password);
+
+      if ('error' in user) {
+        const statusCode = user.error.message === 'User not found' ? 404 : 400;
+
+        return res.status(statusCode).json({
+          error: {
+            message: user.error.message,
+          },
+        });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
       return res.status(404).json({ error });
     }
   };

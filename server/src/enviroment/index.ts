@@ -1,4 +1,4 @@
 import 'dotenv/config';
 
-// eslint-disable-next-line import/prefer-default-export
 export const { PORT } = process.env;
+export const { JWT_SECRET } = process.env;
