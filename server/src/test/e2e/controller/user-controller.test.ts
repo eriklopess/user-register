@@ -88,7 +88,7 @@ describe('UserController', () => {
       expect(response.body).toHaveProperty('info');
       expect(response.body).toHaveProperty('info.limit');
       expect(response.body).toHaveProperty('info.page');
-      expect(response.body).toHaveProperty('info.numberOfPages');
+      expect(response.body).toHaveProperty('info.totalPages');
       expect(response.body).toHaveProperty('info.nextPage');
 
       expect(response.body).toHaveProperty('data');
@@ -242,6 +242,53 @@ describe('UserController', () => {
       expect(response.body).toHaveProperty('error');
       expect(response.body).toHaveProperty('error.message');
       expect(response.body.error.message).toEqual('Invalid id');
+    });
+  });
+
+  describe('UserController/LOGIN', () => {
+    beforeEach(async () => {
+      await prisma.$queryRawUnsafe('TRUNCATE TABLE "User" RESTART IDENTITY CASCADE');
+      await seed();
+    });
+
+    test('login should return the user', async () => {
+      const response = await request(URL).post('/users/login').send({
+        email: usersData[0].email,
+        password: usersData[0].password,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('token');
+      expect(response.body).toHaveProperty('user');
+      expect(response.body.user).toEqual({
+        photoUrl: usersData[0].photoUrl,
+        name: usersData[0].name,
+        email: usersData[0].email,
+      });
+    });
+
+    test('login should return an invalid password error', async () => {
+      const response = await request(URL).post('/users/login').send({
+        email: usersData[0].email,
+        password: 'invalidUserPassword',
+      });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error.message');
+      expect(response.body.error.message).toEqual('Password does not match');
+    });
+
+    test('login should return an user not found error', async () => {
+      const response = await request(URL).post('/users/login').send({
+        email: 'notFoundUserEmail',
+        password: usersData[0].password,
+      });
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('error.message');
+      expect(response.body.error.message).toEqual('User not found');
     });
   });
 });
