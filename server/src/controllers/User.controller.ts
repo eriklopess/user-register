@@ -130,6 +130,7 @@ export default class UserController implements IController<IUser> {
     try {
       const { body } = req;
       const { id } = req.params;
+      delete body.id;
       const user = await this.service.update(Number(id), {
         ...body,
         birthDate: body.birthDate && new Date(body.birthDate),
@@ -153,6 +154,7 @@ export default class UserController implements IController<IUser> {
 
       return res.status(200).json(user);
     } catch (error) {
+      console.log(error);
       return res.status(404).json({ error });
     }
   };
