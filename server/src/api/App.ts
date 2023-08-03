@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
+
 import usersRouters from '../routes/user.route';
 import swaggerDocument from '../docs/swagger.json';
 
@@ -15,6 +17,7 @@ export default class App {
     this.app.use(express.static('public'));
     this.app.use(helmet());
     this.app.disable('x-powered-by');
+    this.app.use(cors());
 
     this.routes();
   }
