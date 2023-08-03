@@ -32,7 +32,7 @@ export default class UserService implements Service<IUser> {
       email: data.email,
       birthDate: new Date(data.birthDate),
       password: data.password,
-      photoUrl: data.photoUrl,
+      photoUrl: data.photoUrl || '',
     };
 
     return this.model.create(userData);

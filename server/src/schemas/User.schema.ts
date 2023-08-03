@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const userSchema = z.object({
-  photoUrl: z.string(),
+  photoUrl: z.string().optional(),
   birthDate: z.date(),
   name: z.string().min(3, { message: 'Name must contain at least 3 character(s)' }),
   email: z.string().email(),
