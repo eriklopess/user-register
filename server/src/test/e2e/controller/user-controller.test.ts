@@ -137,8 +137,10 @@ describe('UserController', () => {
       expect(Array.isArray(response.body.data)).toBe(true);
 
       expect(response.body.data[0]).toStrictEqual({
-        ...usersData[0],
         id: 1,
+        photoUrl: usersData[0].photoUrl,
+        email: usersData[0].email,
+        name: usersData[0].name,
         birthDate: new Date(usersData[0].birthDate).toISOString(),
       });
     });
@@ -151,8 +153,10 @@ describe('UserController', () => {
       expect(Array.isArray(response.body.data)).toBe(true);
 
       expect(response.body.data[0]).toStrictEqual({
-        ...usersData[0],
         id: 1,
+        photoUrl: usersData[0].photoUrl,
+        email: usersData[0].email,
+        name: usersData[0].name,
         birthDate: new Date(usersData[0].birthDate).toISOString(),
       });
     });

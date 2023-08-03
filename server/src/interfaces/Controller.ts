@@ -28,9 +28,9 @@ export type GetAllResponse<T> = {
     }
 }
 
-export interface IController<T, > {
+export interface IController<T, U> {
     create: (req: RequestWithBody<T>, res: Response<T | ResponseError>) => Promise<typeof res>;
-    find: (_req: Request, res: Response<GetAllResponse<T> | ResponseError>) => Promise<typeof res>;
+    find: (_req: Request, res: Response<GetAllResponse<U> | ResponseError>) => Promise<typeof res>;
     findOne: (req: Request<{ id: string }>,
               res: Response<T | ResponseError>) => Promise<typeof res>;
     update: (req: RequestWithBody<T>, res: Response<T | ResponseError>) => Promise<typeof res>;

@@ -3,10 +3,10 @@ import { ZodError } from 'zod';
 import {
   GetAllResponse, IController, LoginResponse, RequestWithBody, ResponseError,
 } from '../interfaces/Controller';
-import { IUser } from '../interfaces/User';
+import { IUser, IUserSelect } from '../interfaces/User';
 import UserService from '../services/User.service';
 
-export default class UserController implements IController<IUser> {
+export default class UserController implements IController<IUser, IUserSelect> {
   private service;
 
   constructor(service = new UserService()) {
@@ -68,7 +68,7 @@ export default class UserController implements IController<IUser> {
 
   find = async (
     req: Request,
-    res: Response<GetAllResponse<IUser> | ResponseError>,
+    res: Response<GetAllResponse<IUserSelect> | ResponseError>,
   ): Promise<typeof res> => {
     try {
       const {

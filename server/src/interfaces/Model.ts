@@ -2,9 +2,9 @@
 
 import { UserFindParams } from './Service';
 
-export interface IModel<T> {
+export interface IModel<T, U> {
     findOne(id: number): Promise<T | null>;
-    find(params: UserFindParams): Promise<T[]>;
+    find(params: UserFindParams): Promise<U[]>;
     create(data: T): Promise<T>;
     update(id: number, data: T): Promise<T>;
     delete(id: number): Promise<T>;

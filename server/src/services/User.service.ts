@@ -1,12 +1,12 @@
 import UserModel from '../model/User.model';
 import UserDTO, { userSchema } from '../schemas/User.schema';
-import { IUser } from '../interfaces/User';
+import { IUser, IUserSelect } from '../interfaces/User';
 import { Service, ServiceError, UserFindParams } from '../interfaces/Service';
 import UserUpdateDTO, { userUpdateSchema } from '../schemas/UserUpdate.schema';
 import { generateToken } from '../helpers/token';
 import { LoginResponse } from '../interfaces/Controller';
 
-export default class UserService implements Service<IUser> {
+export default class UserService implements Service<IUser, IUserSelect> {
   private model;
 
   constructor(model = new UserModel()) {
@@ -38,7 +38,7 @@ export default class UserService implements Service<IUser> {
     return this.model.create(userData);
   };
 
-  find = async (params: UserFindParams): Promise<IUser[]> => this.model.find(params);
+  find = async (params: UserFindParams): Promise<IUserSelect[]> => this.model.find(params);
 
   findOne = async (id: number): Promise<IUser | ServiceError> => {
     const user = await this.model.findOne(id);

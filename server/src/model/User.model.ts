@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import { PrismaClient } from '@prisma/client';
-import { IUser, IUserUpdate } from '../interfaces/User';
+import { IUser, IUserSelect, IUserUpdate } from '../interfaces/User';
 import prismaClient from '../database/prisma';
 import { IModel } from '../interfaces/Model';
 import { UserFindParams } from '../interfaces/Service';
 
-export default class UserModel implements IModel<IUser> {
+export default class UserModel implements IModel<IUser, IUserSelect> {
   private repository;
 
   constructor(repository = new PrismaClient()) {
@@ -32,7 +32,7 @@ export default class UserModel implements IModel<IUser> {
       email = '',
       name = '',
     }: UserFindParams,
-  ): Promise<IUser[]> => prismaClient.user.findMany({
+  ): Promise<IUserSelect[]> => prismaClient.user.findMany({
     skip,
     take: limit,
     where: {
@@ -42,6 +42,14 @@ export default class UserModel implements IModel<IUser> {
       name: {
         contains: name,
       },
+    },
+    select: {
+      password: false,
+      birthDate: true,
+      email: true,
+      id: true,
+      name: true,
+      photoUrl: true,
     },
   });
 
