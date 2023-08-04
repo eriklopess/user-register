@@ -1,4 +1,4 @@
-import { Response, Request } from 'express';
+import e, { Response, Request } from 'express';
 import { ZodError } from 'zod';
 import {
   GetAllResponse, IController, LoginResponse, RequestWithBody, ResponseError,
@@ -99,7 +99,8 @@ export default class UserController implements IController<IUser, IUserSelect> {
         data: users,
       });
     } catch (error) {
-      return res.status(404).json({ error });
+      console.log(error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
   };
 
@@ -119,7 +120,9 @@ export default class UserController implements IController<IUser, IUserSelect> {
       }
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(404).json({ error });
+      console.log(error);
+
+      return res.status(500).json({ error: 'Internal server error' });
     }
   };
 
@@ -154,7 +157,9 @@ export default class UserController implements IController<IUser, IUserSelect> {
 
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(404).json({ error });
+      console.log(error);
+
+      return res.status(500).json({ error: 'Internal server error' });
     }
   };
 
@@ -185,7 +190,9 @@ export default class UserController implements IController<IUser, IUserSelect> {
 
       return res.status(200).json(user);
     } catch (error) {
-      return res.status(404).json({ error });
+      console.log(error);
+
+      return res.status(500).json({ error: 'Internal server error' });
     }
   };
 }

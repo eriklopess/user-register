@@ -5,7 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "ts-node-dev ./src/api/index.ts",
-    "test": "vitest"
+    "start": "ts-node ./src/api/index.ts",
+    "test": "vitest",
+    "seed": "ts-node ./src/database/seed.ts",
+    "first-init": "prisma migrate dev --name='migrate' && npm run seed"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",
