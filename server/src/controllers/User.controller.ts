@@ -1,4 +1,4 @@
-import e, { Response, Request } from 'express';
+import { Response, Request } from 'express';
 import { ZodError } from 'zod';
 import {
   GetAllResponse, IController, LoginResponse, RequestWithBody, ResponseError,
